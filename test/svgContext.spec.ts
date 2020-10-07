@@ -12,19 +12,16 @@ describe( 'SvgContext', (): void => {
     global.document = new MockDocument();
   } );
 
-  describe( 'setSize', (): void => {
+  describe( 'setter size', (): void => {
     it( 'should set the size', (): void => {
       // Arrange
       const svgContext = new SvgContext();
 
       // Act
-      svgContext.setSize( new Vector2( 0, 1 ) );
+      svgContext.size = new Vector2( 1, 2 );
 
       // Assert
-      expect( svgContext.size ).to.not.be.null;
-      if ( svgContext.size !== null ) {
-        expect( svgContext.size.equals( new Vector2( 0, 1 ) ) ).to.be.true;
-      }
+      expect( svgContext.size.equals( new Vector2( 1, 2 ) ) ).to.be.true;
     } );
   } );
 } );

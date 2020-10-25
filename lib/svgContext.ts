@@ -1,9 +1,9 @@
 import { Vector2 } from '@daign/math';
-import { DomPool } from '@daign/2d-pipeline';
 import { ITargetContext } from '@daign/2d-graphics';
+import { DomPool } from '@daign/dom-pool';
 
 /**
- * Class for a svg context.
+ * Class for an svg context.
  */
 export class SvgContext implements ITargetContext {
   public _size: Vector2 = new Vector2( 1, 1 );
@@ -32,6 +32,6 @@ export class SvgContext implements ITargetContext {
    * Constructor.
    */
   public constructor() {
-    this.domNode = DomPool.get( 'svg', 'http://www.w3.org/2000/svg' );
+    this.domNode = DomPool.getSvg( 'svg' );
   }
 }

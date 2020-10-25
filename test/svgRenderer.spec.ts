@@ -5,7 +5,7 @@ import { View } from '@daign/2d-pipeline';
 import { GraphicStyle, Line } from '@daign/2d-graphics';
 import { StyleSheet } from '@daign/style-sheets';
 
-import { SvgRenderer } from '../lib/svgRenderer';
+import { SvgRenderer } from '../lib';
 
 declare var global: any;
 

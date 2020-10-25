@@ -1,8 +1,10 @@
 import { Vector2 } from '@daign/math';
-import { PresentationNode, View, DomPool } from '@daign/2d-pipeline';
+import { Handle } from '@daign/handle';
+import { PresentationNode, View } from '@daign/2d-pipeline';
 import { StyleSelectorChain, StyleSheet, StyleProcessor } from '@daign/style-sheets';
-import { GraphicStyle, Group, Line, Polyline, Text, TwoPointCircle, TwoPointRectangle } from
-'@daign/2d-graphics';
+import { GraphicStyle, Group, Line, Polyline, Text, TwoPointCircle, TwoPointRectangle,
+ControlObject, ApplicationView, FixedRadiusCircle, ControlPoint } from '@daign/2d-graphics';
+import { DomPool } from '@daign/dom-pool';
 
 /**
  * Class for the SvgRenderer.
@@ -29,6 +31,7 @@ export class SvgRenderer {
     node.removeAttribute( 'fill' );
     node.removeAttribute( 'stroke' );
     node.removeAttribute( 'stroke-width' );
+    node.removeAttribute( 'opacity' );
     node.removeAttribute( 'style' );
 
     if ( style.fill ) {
@@ -39,6 +42,9 @@ export class SvgRenderer {
     }
     if ( style.strokeWidth ) {
       node.setAttribute( 'stroke-width', style.strokeWidth );
+    }
+    if ( style.opacity ) {
+      node.setAttribute( 'opacity', style.opacity );
     }
     if ( style.fontSize ) {
       node.style.fontSize = style.fontSize;
@@ -61,7 +67,7 @@ export class SvgRenderer {
       const startPoint = line.getStartTransformed( currentNode.projectNodeToView );
       const endPoint = line.getEndTransformed( currentNode.projectNodeToView );
 
-      const lineNode = DomPool.get( 'line', 'http://www.w3.org/2000/svg' );
+      const lineNode = DomPool.getSvg( 'line' );
       lineNode.setAttribute( 'x1', String( startPoint.x ) );
       lineNode.setAttribute( 'y1', String( startPoint.y ) );
       lineNode.setAttribute( 'x2', String( endPoint.x ) );
@@ -76,7 +82,7 @@ export class SvgRenderer {
       const startPoint = rectangle.getStartTransformed( currentNode.projectNodeToView );
       const size = rectangle.getSizeTransformed( currentNode.projectNodeToView );
 
-      const rectNode = DomPool.get( 'rect', 'http://www.w3.org/2000/svg' );
+      const rectNode = DomPool.getSvg( 'rect' );
       rectNode.setAttribute( 'x', String( startPoint.x ) );
       rectNode.setAttribute( 'y', String( startPoint.y ) );
       rectNode.setAttribute( 'width', String( size.x ) );
@@ -91,7 +97,7 @@ export class SvgRenderer {
       const points = polyline.getPointsTransformed( currentNode.projectNodeToView );
       const pointsString = points.map( ( p: Vector2 ): string => `${p.x},${p.y}` ).join( ' ' );
 
-      const lineNode = DomPool.get( 'polyline', 'http://www.w3.org/2000/svg' );
+      const lineNode = DomPool.getSvg( 'polyline' );
       lineNode.setAttribute( 'points', pointsString );
       node = lineNode;
     }
@@ -103,7 +109,21 @@ export class SvgRenderer {
       const center = circle.getCenterTransformed( currentNode.projectNodeToView );
       const radius = circle.getRadiusTransformed( currentNode.projectNodeToView );
 
-      const circleNode = DomPool.get( 'circle', 'http://www.w3.org/2000/svg' );
+      const circleNode = DomPool.getFreshSvg( 'circle' );
+      circleNode.setAttribute( 'cx', String( center.x ) );
+      circleNode.setAttribute( 'cy', String( center.y ) );
+      circleNode.setAttribute( 'r', String( radius ) );
+      node = circleNode;
+    }
+
+    if ( currentNode.sourceNode instanceof FixedRadiusCircle ) {
+      const circle = currentNode.sourceNode;
+      selectorChain.addSelector( circle.styleSelector );
+
+      const center = circle.getCenterTransformed( currentNode.projectNodeToView );
+      const radius = circle.radius;
+
+      const circleNode = DomPool.getFreshSvg( 'circle' );
       circleNode.setAttribute( 'cx', String( center.x ) );
       circleNode.setAttribute( 'cy', String( center.y ) );
       circleNode.setAttribute( 'r', String( radius ) );
@@ -116,7 +136,7 @@ export class SvgRenderer {
 
       const anchor = text.getAnchorTransformed( currentNode.projectNodeToView );
 
-      const textNode = DomPool.get( 'text', 'http://www.w3.org/2000/svg' );
+      const textNode = DomPool.getSvg( 'text' );
       textNode.setAttribute( 'x', String( anchor.x ) );
       textNode.setAttribute( 'y', String( anchor.y ) );
       textNode.setAttribute( 'text-anchor', text.textAnchor );
@@ -127,7 +147,7 @@ export class SvgRenderer {
     if ( currentNode.sourceNode instanceof Group ) {
       selectorChain.addSelector( currentNode.sourceNode.styleSelector );
 
-      const groupNode = DomPool.get( 'g', 'http://www.w3.org/2000/svg' );
+      const groupNode = DomPool.getFreshSvg( 'g' );
       currentNode.children.forEach( ( child: PresentationNode ): void => {
         const selectorChainCopy = selectorChain.clone();
         const renderedNode = this.renderRecursive( child, selectorChainCopy );
@@ -137,13 +157,42 @@ export class SvgRenderer {
     }
 
     if ( currentNode.sourceNode instanceof View ) {
-      const groupNode = DomPool.get( 'g', 'http://www.w3.org/2000/svg' );
+      const groupNode = DomPool.getSvg( 'g' );
       currentNode.children.forEach( ( child: PresentationNode ): void => {
         const selectorChainCopy = selectorChain.clone();
         const renderedNode = this.renderRecursive( child, selectorChainCopy );
         groupNode.appendChild( renderedNode );
       } );
       node = groupNode;
+    }
+
+    if ( currentNode.sourceNode instanceof ControlObject ) {
+      const handle = new Handle( node );
+      handle.beginning = (): boolean => {
+        return true;
+      };
+      handle.clicked = (): void => {
+        if ( currentNode.sourceNode ) {
+          currentNode.sourceNode.presentationNodes.forEach( ( pn: PresentationNode ): void => {
+            if ( pn.view instanceof ApplicationView ) {
+              pn.view.application.activateElement( currentNode.sourceNode as ControlObject );
+            }
+          } );
+        }
+      };
+    }
+
+    if ( currentNode.sourceNode instanceof ControlPoint ) {
+      const controlPoint = currentNode.sourceNode as ControlPoint;
+
+      const handle = new Handle( node );
+      handle.beginning = (): boolean => {
+        controlPoint.snap();
+        return true;
+      };
+      handle.continuing = (): void => {
+        controlPoint.drag( handle.delta.clone() );
+      };
     }
 
     if ( node !== null ) {

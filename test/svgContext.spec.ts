@@ -3,7 +3,7 @@ import { expect } from 'chai';
 import { Vector2 } from '@daign/math';
 import { MockDocument } from '@daign/mock-dom';
 
-import { SvgContext } from '../lib/svgContext';
+import { SvgContext } from '../lib';
 
 declare var global: any;
 

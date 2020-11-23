@@ -3,7 +3,8 @@ import { Handle } from '@daign/handle';
 import { PresentationNode, View } from '@daign/2d-pipeline';
 import { StyleSelectorChain, StyleSheet, StyleProcessor } from '@daign/style-sheets';
 import { GraphicStyle, Group, Line, Polyline, Text, TwoPointCircle, TwoPointRectangle,
-ControlObject, ApplicationView, FixedRadiusCircle, ControlPoint } from '@daign/2d-graphics';
+ControlObject, ApplicationView, FixedRadiusCircle, ControlPoint, ButtonControl
+} from '@daign/2d-graphics';
 import { DomPool } from '@daign/dom-pool';
 
 /**
@@ -192,6 +193,18 @@ export class SvgRenderer {
       };
       handle.continuing = (): void => {
         controlPoint.drag( handle.delta.clone() );
+      };
+    }
+
+    if ( currentNode.sourceNode instanceof ButtonControl ) {
+      const buttonControl = currentNode.sourceNode as ButtonControl;
+
+      const handle = new Handle( node );
+      handle.beginning = (): boolean => {
+        return true;
+      };
+      handle.clicked = (): void => {
+        buttonControl.click();
       };
     }
 

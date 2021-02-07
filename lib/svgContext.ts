@@ -1,13 +1,21 @@
 import { Vector2 } from '@daign/math';
 import { ITargetContext } from '@daign/2d-graphics';
-import { DomPool } from '@daign/dom-pool';
+import { WrappedDomPool, WrappedNode } from '@daign/dom-pool';
 
 /**
  * Class for an svg context.
  */
 export class SvgContext implements ITargetContext {
-  public _size: Vector2 = new Vector2( 1, 1 );
-  public domNode: any = null;
+  private _size: Vector2 = new Vector2( 1, 1 );
+  public wrappedNode: WrappedNode;
+
+  /**
+   * Get the dom node for the SVG element.
+   * @returns - The dom node.
+   */
+  public get domNode(): any {
+    return this.wrappedNode.domNode;
+  }
 
   /**
    * Get the size of the SVG element.
@@ -32,6 +40,6 @@ export class SvgContext implements ITargetContext {
    * Constructor.
    */
   public constructor() {
-    this.domNode = DomPool.getSvg( 'svg' );
+    this.wrappedNode = WrappedDomPool.getSvg( 'svg' );
   }
 }

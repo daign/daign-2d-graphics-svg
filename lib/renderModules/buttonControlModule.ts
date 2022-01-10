@@ -16,7 +16,7 @@ export const buttonControlModule = new RenderModule(
     if ( node !== null ) {
       const buttonControl = currentNode.sourceNode as ButtonControl;
 
-      const handle = new Handle( node );
+      const handle = new Handle( { startNode: node } );
       handle.beginning = (): boolean => {
         return true;
       };

@@ -16,7 +16,7 @@ export const controlObjectModule = new RenderModule(
     if ( node !== null ) {
       const controlObject = currentNode.sourceNode as ControlObject;
 
-      const handle = new Handle( node );
+      const handle = new Handle( { startNode: node } );
       handle.beginning = (): boolean => {
         return true;
       };

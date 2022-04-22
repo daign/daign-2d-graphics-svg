@@ -4,7 +4,7 @@ import { GraphicStyle } from '@daign/2d-graphics';
 import { SvgRenderer } from './svgRenderer';
 
 import { buttonControlModule, controlObjectModule, controlPointModule, fixedRadiusCircleModule,
-  groupModule, lineModule, polylineModule, textModule, twoPointCircleModule,
+  groupModule, lineModule, polylineModule, scalableTextModule, textModule, twoPointCircleModule,
   twoPointRectangleModule, viewModule } from './renderModules';
 
 export class RendererFactory {
@@ -23,6 +23,7 @@ export class RendererFactory {
     renderer.addRenderModule( twoPointCircleModule );
     renderer.addRenderModule( fixedRadiusCircleModule );
     renderer.addRenderModule( textModule );
+    renderer.addRenderModule( scalableTextModule );
     renderer.addRenderModule( groupModule );
     renderer.addRenderModule( viewModule );
     renderer.addRenderModule( controlObjectModule );

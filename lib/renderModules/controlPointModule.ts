@@ -19,6 +19,10 @@ export const controlPointModule = new RenderModule(
       const handle = new Handle( { startNode: node } );
       handle.beginning = (): boolean => {
         controlPoint.snap();
+
+        controlPoint.application.selectionManager.setSelection( controlPoint.controlObject,
+          controlPoint.controlIndex );
+
         return true;
       };
       handle.continuing = (): void => {

@@ -24,7 +24,7 @@ export const controlObjectModule = new RenderModule(
         if ( controlObject ) {
           controlObject.presentationNodes.forEach( ( pn: PresentationNode ): void => {
             if ( pn.view instanceof ApplicationView ) {
-              pn.view.application.activateElement( controlObject );
+              pn.view.application.selectionManager.setSelection( controlObject, null );
             }
           } );
         }

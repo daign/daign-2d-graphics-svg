@@ -1,4 +1,4 @@
-import { PresentationNode, View } from '@daign/2d-pipeline';
+import { GraphicNode, PresentationNode, View } from '@daign/2d-pipeline';
 import { StyleSelectorChain, StyleSheet, StyleProcessor } from '@daign/style-sheets';
 import { GraphicStyle } from '@daign/2d-graphics';
 import { WrappedDomPool, WrappedNode } from '@daign/dom-pool';
@@ -68,7 +68,10 @@ export class SvgRenderer {
 
     // All render modules added to the SvgRenderer are checked and executed if the type matches.
     this.renderModules.forEach( ( module: RenderModule ): void => {
-      if ( currentNode.sourceNode instanceof module.type ) {
+      if (
+        currentNode.sourceNode &&
+        this.doesModuleMatchToNode( currentNode.sourceNode, module.type )
+      ) {
         const result = module.callback( currentNode, selectorChain, node, this );
         if ( result !== null ) {
           node = result;
@@ -116,5 +119,37 @@ export class SvgRenderer {
         target.appendChild( result );
       }
     }
+  }
+
+  /**
+   * Checks whether the type of the render module matches the graphic node. It matches when the
+   * source node is from the same class type or an inherited class type.
+   * @param graphicNode - The graphic node from the document tree.
+   * @param moduleType - The type of the render module.
+   * @returns Whether the types match.
+   */
+  private doesModuleMatchToNode( graphicNode: GraphicNode, moduleType: any ): boolean {
+    // Instanceof check.
+    if ( graphicNode instanceof moduleType ) {
+      return true;
+    }
+
+    /* Instanceof is not working for classes inherited from a base class that originates from its
+     * own instance of an imported library. Therefore we do a recursive check against the prototype
+     * chain of the node. */
+    const recursiveCheck = ( classType: any ): boolean => {
+      if ( classType.constructor.name === moduleType.name ) {
+        return true;
+      } else {
+        const parentClass = Object.getPrototypeOf( classType );
+        if ( parentClass ) {
+          return recursiveCheck( parentClass );
+        } else {
+          return false;
+        }
+      }
+    };
+
+    return recursiveCheck( graphicNode );
   }
 }

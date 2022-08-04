@@ -2,7 +2,7 @@ import { expect } from 'chai';
 
 import { MockDocument } from '@daign/mock-dom';
 import { View } from '@daign/2d-pipeline';
-import { GraphicStyle, Line } from '@daign/2d-graphics';
+import { GraphicStyle, Line, StyledGraphicNode } from '@daign/2d-graphics';
 import { StyleSheet } from '@daign/style-sheets';
 import { WrappedNode } from '@daign/dom-pool';
 
@@ -31,7 +31,114 @@ describe( 'SvgRenderer', (): void => {
       svgRenderer.render( view, target );
 
       // Assert
-      expect( target.children.length ).to.equal( 1 );
+      expect( target.children.length ).to.equal( 1 ); // View node.
+      expect( target.children[ 0 ].children.length ).to.equal( 1 ); // Line node.
+      expect( ( target.children[ 0 ].children[ 0 ] as any )._domNode.nodeName )
+        .to.equal( 'line' );
+    } );
+
+    it( 'should render a node for an inherited class', (): void => {
+      // Arrange
+      class CustomLine extends Line {
+        public constructor() {
+          super();
+        }
+      }
+
+      const styleSheet = new StyleSheet<GraphicStyle>();
+      const rendererFactory = new RendererFactory();
+      const svgRenderer = rendererFactory.createRenderer( styleSheet );
+
+      const node = new CustomLine();
+      const view = new View();
+      view.mountNode( node );
+      const target = new WrappedNode( 'div' );
+
+      // Act
+      svgRenderer.render( view, target );
+
+      // Assert
+      expect( target.children.length ).to.equal( 1 ); // View node.
+      expect( target.children[ 0 ].children.length ).to.equal( 1 ); // Line node.
+      expect( ( target.children[ 0 ].children[ 0 ] as any )._domNode.nodeName )
+        .to.equal( 'line' );
+    } );
+
+    it( 'should render a node for a class of the same name', (): void => {
+      // Arrange
+      /* This class has the same name as the Polyline class, but does not inherit from any class
+       * with a render module. */
+      class Polyline extends StyledGraphicNode {
+        public constructor() {
+          super();
+        }
+      }
+
+      const styleSheet = new StyleSheet<GraphicStyle>();
+      const rendererFactory = new RendererFactory();
+      const svgRenderer = rendererFactory.createRenderer( styleSheet );
+
+      const node = new Polyline();
+      const view = new View();
+      view.mountNode( node );
+      const target = new WrappedNode( 'div' );
+
+      // Act
+      svgRenderer.render( view, target );
+
+      // Assert
+      expect( target.children.length ).to.equal( 1 ); // View node.
+      expect( target.children[ 0 ].children.length ).to.equal( 1 ); // Polyline node.
+      expect( ( target.children[ 0 ].children[ 0 ] as any )._domNode.nodeName )
+        .to.equal( 'polyline' );
+    } );
+
+    it( 'should not render a node for a class without a corresponding render module', (): void => {
+      // Arrange
+      class CustomLine extends StyledGraphicNode {
+        public constructor() {
+          super();
+        }
+      }
+
+      const styleSheet = new StyleSheet<GraphicStyle>();
+      const rendererFactory = new RendererFactory();
+      const svgRenderer = rendererFactory.createRenderer( styleSheet );
+
+      const node = new CustomLine();
+      const view = new View();
+      view.mountNode( node );
+      const target = new WrappedNode( 'div' );
+
+      // Act
+      svgRenderer.render( view, target );
+
+      // Assert
+      expect( target.children.length ).to.equal( 1 ); // View node.
+      expect( target.children[ 0 ].children.length ).to.equal( 0 );
+    } );
+
+    it( 'should clear children when doing multiple renders', (): void => {
+      // Arrange
+      const styleSheet = new StyleSheet<GraphicStyle>();
+      const rendererFactory = new RendererFactory();
+      const svgRenderer = rendererFactory.createRenderer( styleSheet );
+
+      const node = new Line();
+      const view = new View();
+      view.mountNode( node );
+      const target = new WrappedNode( 'div' );
+
+      // Act
+      svgRenderer.render( view, target ); // First render call.
+      svgRenderer.render( view, target ); // Second render call.
+
+      // Assert
+      // Result still has single nodes only.
+      expect( target.children.length ).to.equal( 1 ); // View node.
+      expect( target.children[ 0 ].children.length ).to.equal( 1 ); // Line node.
+      expect( ( target.children[ 0 ].children[ 0 ] as any )._domNode.nodeName )
+        .to.equal( 'line' );
     } );
   } );
 } );

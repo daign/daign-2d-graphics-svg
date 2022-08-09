@@ -39,17 +39,80 @@ export class SvgRenderer {
     if ( style.fill ) {
       node.setAttribute( 'fill', style.fill );
     }
+    if ( style.fillOpacity ) {
+      node.setAttribute( 'fill-opacity', String( style.fillOpacity ) );
+    }
+    if ( style.fillRule ) {
+      node.setAttribute( 'fill-rule', style.fillRule );
+    }
     if ( style.stroke ) {
       node.setAttribute( 'stroke', style.stroke );
     }
     if ( style.strokeWidth ) {
       node.setAttribute( 'stroke-width', String( style.strokeWidth ) );
     }
+    if ( style.strokeOpacity ) {
+      node.setAttribute( 'stroke-opacity', String( style.strokeOpacity ) );
+    }
+    if ( style.strokeLinecap ) {
+      node.setAttribute( 'stroke-linecap', style.strokeLinecap );
+    }
+    if ( style.strokeLinejoin ) {
+      node.setAttribute( 'stroke-linejoin', style.strokeLinejoin );
+    }
+    if ( style.strokeMiterlimit ) {
+      node.setAttribute( 'stroke-miterlimit', String( style.strokeMiterlimit ) );
+    }
+    if ( style.strokeDasharray ) {
+      node.setAttribute( 'stroke-dasharray', style.strokeDasharray );
+    }
+    if ( style.strokeDashoffset ) {
+      node.setAttribute( 'stroke-dashoffset', String( style.strokeDashoffset ) );
+    }
+    if ( style.vectorEffect ) {
+      node.setAttribute( 'vector-effect', style.vectorEffect );
+    }
+    if ( style.display ) {
+      node.setAttribute( 'display', style.display );
+    }
+    if ( style.visibility ) {
+      node.setAttribute( 'visibility', style.visibility );
+    }
     if ( style.opacity ) {
       node.setAttribute( 'opacity', String( style.opacity ) );
     }
+    if ( style.fontFamily ) {
+      node.style.fontFamily = style.fontFamily;
+    }
     if ( style.fontSize ) {
       node.style.fontSize = style.fontSize;
+    }
+    if ( style.fontStyle ) {
+      node.style.fontSize = style.fontStyle;
+    }
+    if ( style.fontVariant ) {
+      node.style.fontVariant = style.fontVariant;
+    }
+    if ( style.fontWeight ) {
+      node.style.fontWeight = style.fontWeight;
+    }
+    if ( style.fontStretch ) {
+      node.style.fontStretch = style.fontStretch;
+    }
+    if ( style.letterSpacing ) {
+      node.style.letterSpacing = style.letterSpacing;
+    }
+    if ( style.wordSpacing ) {
+      node.style.wordSpacing = style.wordSpacing;
+    }
+    if ( style.textDecoration ) {
+      node.style.textDecoration = style.textDecoration;
+    }
+    if ( style.pointerEvents ) {
+      node.setAttribute( 'pointer-events', style.pointerEvents );
+    }
+    if ( style.cursor ) {
+      node.setAttribute( 'cursor', style.cursor );
     }
   }
 

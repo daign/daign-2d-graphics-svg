@@ -39,7 +39,7 @@ export class SvgRenderer {
     if ( style.fill ) {
       node.setAttribute( 'fill', style.fill );
     }
-    if ( style.fillOpacity ) {
+    if ( style.fillOpacity !== null ) {
       node.setAttribute( 'fill-opacity', String( style.fillOpacity ) );
     }
     if ( style.fillRule ) {
@@ -48,10 +48,10 @@ export class SvgRenderer {
     if ( style.stroke ) {
       node.setAttribute( 'stroke', style.stroke );
     }
-    if ( style.strokeWidth ) {
+    if ( style.strokeWidth !== null ) {
       node.setAttribute( 'stroke-width', String( style.strokeWidth ) );
     }
-    if ( style.strokeOpacity ) {
+    if ( style.strokeOpacity !== null ) {
       node.setAttribute( 'stroke-opacity', String( style.strokeOpacity ) );
     }
     if ( style.strokeLinecap ) {
@@ -60,13 +60,13 @@ export class SvgRenderer {
     if ( style.strokeLinejoin ) {
       node.setAttribute( 'stroke-linejoin', style.strokeLinejoin );
     }
-    if ( style.strokeMiterlimit ) {
+    if ( style.strokeMiterlimit !== null ) {
       node.setAttribute( 'stroke-miterlimit', String( style.strokeMiterlimit ) );
     }
     if ( style.strokeDasharray ) {
       node.setAttribute( 'stroke-dasharray', style.strokeDasharray );
     }
-    if ( style.strokeDashoffset ) {
+    if ( style.strokeDashoffset !== null ) {
       node.setAttribute( 'stroke-dashoffset', String( style.strokeDashoffset ) );
     }
     if ( style.vectorEffect ) {
@@ -78,7 +78,7 @@ export class SvgRenderer {
     if ( style.visibility ) {
       node.setAttribute( 'visibility', style.visibility );
     }
-    if ( style.opacity ) {
+    if ( style.opacity !== null ) {
       node.setAttribute( 'opacity', String( style.opacity ) );
     }
     if ( style.fontFamily ) {
@@ -197,9 +197,11 @@ export class SvgRenderer {
       return true;
     }
 
+    // TODO: the following code returned wrong matches in some environments.
     /* Instanceof is not working for classes inherited from a base class that originates from its
      * own instance of an imported library. Therefore we do a recursive check against the prototype
      * chain of the node. */
+    /*
     const recursiveCheck = ( classType: any ): boolean => {
       if ( classType.constructor.name === moduleType.name ) {
         return true;
@@ -214,5 +216,8 @@ export class SvgRenderer {
     };
 
     return recursiveCheck( graphicNode );
+    */
+
+    return false;
   }
 }

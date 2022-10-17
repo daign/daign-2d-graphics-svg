@@ -64,35 +64,6 @@ describe( 'SvgRenderer', (): void => {
         .to.equal( 'line' );
     } );
 
-    xit( 'should render a node for a class of the same name', (): void => {
-      // Arrange
-      /* This class has the same name as the Polyline class, but does not inherit from any class
-       * with a render module. */
-      class Polyline extends StyledGraphicNode {
-        public constructor() {
-          super();
-        }
-      }
-
-      const styleSheet = new StyleSheet<GraphicStyle>();
-      const rendererFactory = new RendererFactory();
-      const svgRenderer = rendererFactory.createRenderer( styleSheet );
-
-      const node = new Polyline();
-      const view = new View();
-      view.mountNode( node );
-      const target = new WrappedNode( 'div' );
-
-      // Act
-      svgRenderer.render( view, target );
-
-      // Assert
-      expect( target.children.length ).to.equal( 1 ); // View node.
-      expect( target.children[ 0 ].children.length ).to.equal( 1 ); // Polyline node.
-      expect( ( target.children[ 0 ].children[ 0 ] as any )._domNode.nodeName )
-        .to.equal( 'polyline' );
-    } );
-
     it( 'should not render a node for a class without a corresponding render module', (): void => {
       // Arrange
       class CustomLine extends StyledGraphicNode {

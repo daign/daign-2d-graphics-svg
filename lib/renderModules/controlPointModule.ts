@@ -21,7 +21,7 @@ export const controlPointModule = new RenderModule(
         controlPoint.snap();
 
         controlPoint.application.selectionManager.setSelection( controlPoint.controlObject,
-          controlPoint.controlIndex );
+          controlPoint.targetPoint );
 
         return true;
       };

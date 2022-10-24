@@ -81,6 +81,9 @@ export class SvgRenderer {
     if ( style.opacity !== null ) {
       node.setAttribute( 'opacity', String( style.opacity ) );
     }
+    if ( style.paintOrder ) {
+      node.setAttribute( 'paint-order', style.paintOrder );
+    }
     if ( style.fontFamily ) {
       node.style.fontFamily = style.fontFamily;
     }

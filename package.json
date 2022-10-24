@@ -1,6 +1,6 @@
 {
   "name": "@daign/2d-graphics-svg",
-  "version": "1.0.12",
+  "version": "1.0.13",
   "description": "A SVG renderer for the daign-2d-graphics library.",
   "keywords": [
     "graphics",
@@ -45,7 +45,7 @@
   },
   "dependencies": {
     "@daign/2d-pipeline": "^1.0.5",
-    "@daign/2d-graphics": "^1.0.19",
+    "@daign/2d-graphics": "^1.0.21",
     "@daign/dom-pool": "^1.0.3",
     "@daign/math": "^1.0.17",
     "@daign/style-sheets": "^1.0.2"

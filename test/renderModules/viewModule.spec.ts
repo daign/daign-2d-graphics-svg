@@ -1,18 +1,17 @@
 import { expect } from 'chai';
 
-import { Vector2 } from '@daign/math';
 import { StyleSelectorChain, StyleSheet } from '@daign/style-sheets';
 import { PresentationNode, View } from '@daign/2d-pipeline';
 import { WrappedNode } from '@daign/dom-pool';
-import { GraphicStyle, QuadraticCurve } from '@daign/2d-graphics';
+import { GraphicStyle } from '@daign/2d-graphics';
 import { MockDocument } from '@daign/mock-dom';
 
 import { RendererFactory } from '../../lib';
-import { quadraticCurveModule } from '../../lib/renderModules';
+import { viewModule } from '../../lib/renderModules';
 
 declare var global: any;
 
-describe( 'quadraticCurveModule', (): void => {
+describe( 'viewModule', (): void => {
   beforeEach( (): void => {
     global.document = new MockDocument();
   } );
@@ -24,10 +23,9 @@ describe( 'quadraticCurveModule', (): void => {
       const rendererFactory = new RendererFactory();
       const svgRenderer = rendererFactory.createRenderer( styleSheet );
 
-      const module = quadraticCurveModule;
+      const module = viewModule;
       const view = new View();
-      const node = new QuadraticCurve();
-      const currentNode = new PresentationNode( view, node );
+      const currentNode = new PresentationNode( view, view );
       const selectorChain = new StyleSelectorChain();
 
       // Act
@@ -37,29 +35,22 @@ describe( 'quadraticCurveModule', (): void => {
       expect( result instanceof WrappedNode ).to.be.true;
     } );
 
-    it( 'should create a path node and set the attributes', (): void => {
+    it( 'should create a group node', (): void => {
       // Arrange
       const styleSheet = new StyleSheet<GraphicStyle>();
       const rendererFactory = new RendererFactory();
       const svgRenderer = rendererFactory.createRenderer( styleSheet );
 
-      const module = quadraticCurveModule;
+      const module = viewModule;
       const view = new View();
-      const curve = new QuadraticCurve();
-      curve.points.elements = [
-        new Vector2( 1, 2 ),
-        new Vector2( 3, 4 ),
-        new Vector2( 5, 6 )
-      ];
-      const currentNode = new PresentationNode( view, curve );
+      const currentNode = new PresentationNode( view, view );
       const selectorChain = new StyleSelectorChain();
 
       // Act
       const result = module.callback( currentNode, selectorChain, null, svgRenderer );
 
       // Assert
-      expect( result!.domNode.nodeName ).to.equal( 'path' );
-      expect( result!.domNode.getAttribute( 'd' ) ).to.equal( 'M 1,2 Q 3,4 5,6' );
+      expect( result!.domNode.nodeName ).to.equal( 'g' );
     } );
   } );
 } );

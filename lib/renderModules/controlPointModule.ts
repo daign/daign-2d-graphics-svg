@@ -26,7 +26,9 @@ export const controlPointModule = new RenderModule(
         return true;
       };
       handle.continuing = (): void => {
-        controlPoint.drag( handle.delta.clone() );
+        if ( handle.delta ) {
+          controlPoint.drag( handle.delta.clone() );
+        }
       };
     }
 

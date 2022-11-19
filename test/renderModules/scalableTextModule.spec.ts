@@ -4,19 +4,12 @@ import { Vector2 } from '@daign/math';
 import { StyleSelectorChain, StyleSheet } from '@daign/style-sheets';
 import { PresentationNode, View } from '@daign/2d-pipeline';
 import { WrappedNode } from '@daign/dom-pool';
-import { GraphicStyle, QuadraticCurve } from '@daign/2d-graphics';
-import { MockDocument } from '@daign/mock-dom';
+import { GraphicStyle, ScalableText } from '@daign/2d-graphics';
 
 import { RendererFactory } from '../../lib';
-import { quadraticCurveModule } from '../../lib/renderModules';
+import { scalableTextModule } from '../../lib/renderModules';
 
-declare var global: any;
-
-describe( 'quadraticCurveModule', (): void => {
-  beforeEach( (): void => {
-    global.document = new MockDocument();
-  } );
-
+describe( 'scalableTextModule', (): void => {
   describe( 'render logic callback', (): void => {
     it( 'should return a wrapped node', (): void => {
       // Arrange
@@ -24,9 +17,9 @@ describe( 'quadraticCurveModule', (): void => {
       const rendererFactory = new RendererFactory();
       const svgRenderer = rendererFactory.createRenderer( styleSheet );
 
-      const module = quadraticCurveModule;
+      const module = scalableTextModule;
       const view = new View();
-      const node = new QuadraticCurve();
+      const node = new ScalableText();
       const currentNode = new PresentationNode( view, node );
       const selectorChain = new StyleSelectorChain();
 
@@ -37,29 +30,31 @@ describe( 'quadraticCurveModule', (): void => {
       expect( result instanceof WrappedNode ).to.be.true;
     } );
 
-    it( 'should create a path node and set the attributes', (): void => {
+    it( 'should create a text node and set the attributes', (): void => {
       // Arrange
       const styleSheet = new StyleSheet<GraphicStyle>();
       const rendererFactory = new RendererFactory();
       const svgRenderer = rendererFactory.createRenderer( styleSheet );
 
-      const module = quadraticCurveModule;
+      const module = scalableTextModule;
       const view = new View();
-      const curve = new QuadraticCurve();
-      curve.points.elements = [
-        new Vector2( 1, 2 ),
-        new Vector2( 3, 4 ),
-        new Vector2( 5, 6 )
-      ];
-      const currentNode = new PresentationNode( view, curve );
+      const text = new ScalableText();
+      text.anchor = new Vector2( 1, 2 );
+      text.fontSize = 2;
+      text.content = 'SomeContent';
+      text.textAnchor = 'middle';
+      const currentNode = new PresentationNode( view, text );
       const selectorChain = new StyleSelectorChain();
 
       // Act
       const result = module.callback( currentNode, selectorChain, null, svgRenderer );
 
       // Assert
-      expect( result!.domNode.nodeName ).to.equal( 'path' );
-      expect( result!.domNode.getAttribute( 'd' ) ).to.equal( 'M 1,2 Q 3,4 5,6' );
+      expect( result!.domNode.nodeName ).to.equal( 'text' );
+      expect( result!.domNode.getAttribute( 'x' ) ).to.equal( '1' );
+      expect( result!.domNode.getAttribute( 'y' ) ).to.equal( '2' );
+      expect( result!.domNode.textContent ).to.equal( 'SomeContent' );
+      expect( result!.domNode.getAttribute( 'font-size' ) ).to.equal( '2' );
     } );
   } );
 } );

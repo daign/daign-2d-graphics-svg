@@ -17,9 +17,7 @@ export const viewModule = new RenderModule(
     currentNode.children.forEach( ( child: PresentationNode ): void => {
       const selectorChainCopy = selectorChain.clone();
       const renderedNode = renderer.renderRecursive( child, selectorChainCopy );
-      if ( renderedNode !== null ) {
-        groupNode.appendChild( renderedNode );
-      }
+      renderer.appendRenderedNode( groupNode, renderedNode );
     } );
     return groupNode;
   }

@@ -14,6 +14,9 @@ export class SvgRenderer {
 
   private renderModules: RenderModule[] = [];
 
+  // Whether to remove unnecessary group notes from the renderer output.
+  public flattenGroups: boolean = false;
+
   /**
    * Constructor.
    * @param styleSheet - The style sheet to use.
@@ -91,7 +94,7 @@ export class SvgRenderer {
       node.style.fontSize = style.fontSize;
     }
     if ( style.fontStyle ) {
-      node.style.fontSize = style.fontStyle;
+      node.style.fontStyle = style.fontStyle;
     }
     if ( style.fontVariant ) {
       node.style.fontVariant = style.fontVariant;
@@ -180,10 +183,8 @@ export class SvgRenderer {
     const selectorChain = new StyleSelectorChain();
 
     if ( presentationNode !== null ) {
-      const result = this.renderRecursive( presentationNode, selectorChain );
-      if ( result !== null ) {
-        target.appendChild( result );
-      }
+      const renderedNode = this.renderRecursive( presentationNode, selectorChain );
+      this.appendRenderedNode( target, renderedNode );
     }
   }
 
@@ -196,31 +197,29 @@ export class SvgRenderer {
    */
   private doesModuleMatchToNode( graphicNode: GraphicNode, moduleType: any ): boolean {
     // Instanceof check.
-    if ( graphicNode instanceof moduleType ) {
-      return true;
-    }
+    return ( graphicNode instanceof moduleType );
+  }
 
-    // TODO: the following code returned wrong matches in some environments.
-    /* Instanceof is not working for classes inherited from a base class that originates from its
-     * own instance of an imported library. Therefore we do a recursive check against the prototype
-     * chain of the node. */
-    /*
-    const recursiveCheck = ( classType: any ): boolean => {
-      if ( classType.constructor.name === moduleType.name ) {
-        return true;
+  /**
+   * Append the rendered node to the parent node.
+   * @param parent - The parent node.
+   * @param renderedNode - The rendered node to append or null.
+   */
+  public appendRenderedNode( parent: WrappedNode, renderedNode: WrappedNode | null ): void {
+    if ( renderedNode !== null ) {
+      /* When attempting to append an unchanged group element while the flattenGroups property is
+       * set, then the child elements are appended directly instead. */
+      if ( this.flattenGroups && renderedNode.nodeName === 'g' && renderedNode.isPristine ) {
+        renderedNode.children.forEach( ( subChild: WrappedNode ): void => {
+          parent.appendChild( subChild );
+        } );
+
+        // The unused group node is returned to the dom pool.
+        WrappedDomPool.giveBack( renderedNode );
       } else {
-        const parentClass = Object.getPrototypeOf( classType );
-        if ( parentClass ) {
-          return recursiveCheck( parentClass );
-        } else {
-          return false;
-        }
+        // Else append the rendered node directly.
+        parent.appendChild( renderedNode );
       }
-    };
-
-    return recursiveCheck( graphicNode );
-    */
-
-    return false;
+    }
   }
 }

@@ -9,5 +9,6 @@ export { quadraticCurveModule } from './quadraticCurveModule';
 export { scalableTextModule } from './scalableTextModule';
 export { textModule } from './textModule';
 export { twoPointCircleModule } from './twoPointCircleModule';
+export { twoPointImageModule } from './twoPointImageModule';
 export { twoPointRectangleModule } from './twoPointRectangleModule';
 export { viewModule } from './viewModule';

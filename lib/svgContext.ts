@@ -2,6 +2,8 @@ import { Vector2 } from '@daign/math';
 import { ITargetContext } from '@daign/2d-graphics';
 import { WrappedDomPool, WrappedNode } from '@daign/dom-pool';
 
+const xlinkNamespace = 'http://www.w3.org/1999/xlink';
+
 /**
  * Class for an svg context.
  */
@@ -31,6 +33,8 @@ export class SvgContext implements ITargetContext {
    */
   public set size( size: Vector2 ) {
     this._size.copy( size );
+    this.domNode.setAttribute( 'xmlns', WrappedDomPool.svgNamespace );
+    this.domNode.setAttribute( 'xmlns:xlink', xlinkNamespace );
     this.domNode.style.width  = `${size.x}px`;
     this.domNode.style.height = `${size.y}px`;
     this.domNode.setAttribute( 'viewBox', `0,0,${size.x},${size.y}` );

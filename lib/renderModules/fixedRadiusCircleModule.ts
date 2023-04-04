@@ -1,3 +1,4 @@
+import { Matrix3 } from '@daign/math';
 import { PresentationNode } from '@daign/2d-pipeline';
 import { StyleSelectorChain } from '@daign/style-sheets';
 import { FixedRadiusCircle } from '@daign/2d-graphics';
@@ -9,12 +10,13 @@ export const fixedRadiusCircleModule = new RenderModule(
   FixedRadiusCircle,
   (
     currentNode: PresentationNode,
+    projection: Matrix3,
     selectorChain: StyleSelectorChain
   ): WrappedNode | null => {
     const circle = currentNode.sourceNode as FixedRadiusCircle;
     selectorChain.addSelector( circle.styleSelector );
 
-    const center = circle.getCenterTransformed( currentNode.projectNodeToView );
+    const center = circle.getCenterTransformed( projection );
     const radius = circle.radius;
 
     const circleNode = WrappedDomPool.getSvg( 'circle' );

@@ -1,3 +1,4 @@
+import { Matrix3 } from '@daign/math';
 import { PresentationNode } from '@daign/2d-pipeline';
 import { StyleSelectorChain } from '@daign/style-sheets';
 import { TwoPointRectangle } from '@daign/2d-graphics';
@@ -9,13 +10,14 @@ export const twoPointRectangleModule = new RenderModule(
   TwoPointRectangle,
   (
     currentNode: PresentationNode,
+    projection: Matrix3,
     selectorChain: StyleSelectorChain
   ): WrappedNode | null => {
     const rectangle = currentNode.sourceNode as TwoPointRectangle;
     selectorChain.addSelector( rectangle.styleSelector );
 
-    const startPoint = rectangle.getStartTransformed( currentNode.projectNodeToView );
-    const size = rectangle.getSizeTransformed( currentNode.projectNodeToView );
+    const startPoint = rectangle.getStartTransformed( projection );
+    const size = rectangle.getSizeTransformed( projection );
 
     const rectNode = WrappedDomPool.getSvg( 'rect' );
     rectNode.setAttribute( 'x', String( startPoint.x ) );

@@ -10,20 +10,21 @@ import { RenderModule } from './renderModule';
  * Constructs a DOM-tree of SVG-specific nodes.
  */
 export class SvgRenderer {
-  private styleSheet: StyleSheet<GraphicStyle>;
-
   private renderModules: RenderModule[] = [];
 
   // Whether to remove unnecessary group notes from the renderer output.
   public flattenGroups: boolean = false;
 
+  // Whether the renderer should render using SVG native transforms where possible.
+  public useNativeTransforms: boolean = false;
+
   /**
    * Constructor.
    * @param styleSheet - The style sheet to use.
    */
-  public constructor( styleSheet: StyleSheet<GraphicStyle> ) {
-    this.styleSheet = styleSheet;
-  }
+  public constructor(
+    private styleSheet: StyleSheet<GraphicStyle>
+  ) {}
 
   /**
    * Add a render module to the renderer.
@@ -135,13 +136,18 @@ export class SvgRenderer {
      * were created by other modules prior in the execution order. */
     let node: WrappedNode | null = null;
 
+    /* If the renderer is also applying native transforms, then use the non native projection
+     * matrix, because it does not include the native transformations. */
+    const projection = this.useNativeTransforms ? currentNode.projectNodeToViewNonNative :
+      currentNode.projectNodeToView;
+
     // All render modules added to the SvgRenderer are checked and executed if the type matches.
     this.renderModules.forEach( ( module: RenderModule ): void => {
       if (
         currentNode.sourceNode &&
         this.doesModuleMatchToNode( currentNode.sourceNode, module.type )
       ) {
-        const result = module.callback( currentNode, selectorChain, node, this );
+        const result = module.callback( currentNode, projection, selectorChain, node, this );
         if ( result !== null ) {
           node = result;
         }
@@ -149,11 +155,21 @@ export class SvgRenderer {
     } );
 
     if ( node !== null ) {
+      // If a node was created, then apply a style.
       const styleProcessor = new StyleProcessor<GraphicStyle>();
       const calculatedStyle = styleProcessor.calculateStyle( this.styleSheet, selectorChain,
         GraphicStyle );
       this.applyStyle( node, calculatedStyle );
+
+      // If the renderer should use native transforms, then add the transform attribute.
+      if ( this.useNativeTransforms && currentNode.sourceNode ) {
+        const transformCommand = currentNode.sourceNode.transformation.nativeSvgTransform;
+        if ( transformCommand ) {
+          ( node as WrappedNode ).setAttribute( 'transform', transformCommand );
+        }
+      }
     }
+
     return node;
   }
 

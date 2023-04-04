@@ -9,9 +9,16 @@ import { buttonControlModule, controlObjectModule, controlPointModule, fixedRadi
 } from './renderModules';
 
 export class RendererFactory {
-
+  /**
+   * Constructor.
+   */
   public constructor() {}
 
+  /**
+   * Create a new SvgRenderer with default modules.
+   * @param styleSheet - The style sheet to use.
+   * @returns The SvgRenderer.
+   */
   public createRenderer( styleSheet: StyleSheet<GraphicStyle> ): SvgRenderer {
     const renderer = new SvgRenderer( styleSheet );
 

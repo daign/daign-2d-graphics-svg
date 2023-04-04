@@ -1,3 +1,4 @@
+import { Matrix3 } from '@daign/math';
 import { PresentationNode } from '@daign/2d-pipeline';
 import { StyleSelectorChain } from '@daign/style-sheets';
 import { ScalableText } from '@daign/2d-graphics';
@@ -9,13 +10,14 @@ export const scalableTextModule = new RenderModule(
   ScalableText,
   (
     currentNode: PresentationNode,
+    projection: Matrix3,
     selectorChain: StyleSelectorChain
   ): WrappedNode | null => {
     const text = currentNode.sourceNode as ScalableText;
     selectorChain.addSelector( text.styleSelector );
 
-    const anchor = text.getAnchorTransformed( currentNode.projectNodeToView );
-    const fontSize = text.getFontSizeTransformed( currentNode.projectNodeToView );
+    const anchor = text.getAnchorTransformed( projection );
+    const fontSize = text.getFontSizeTransformed( projection );
 
     const textNode = WrappedDomPool.getSvg( 'text' );
     textNode.setAttribute( 'x', String( anchor.x ) );

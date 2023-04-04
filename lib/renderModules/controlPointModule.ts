@@ -1,3 +1,4 @@
+import { Matrix3 } from '@daign/math';
 import { Handle } from '@daign/handle';
 import { PresentationNode } from '@daign/2d-pipeline';
 import { StyleSelectorChain } from '@daign/style-sheets';
@@ -10,7 +11,8 @@ export const controlPointModule = new RenderModule(
   ControlPoint,
   (
     currentNode: PresentationNode,
-    _: StyleSelectorChain,
+    _p: Matrix3,
+    _s: StyleSelectorChain,
     node: WrappedNode | null
   ): WrappedNode | null => {
     if ( node !== null ) {
@@ -18,6 +20,7 @@ export const controlPointModule = new RenderModule(
 
       const handle = new Handle();
       handle.setStartNode( node );
+
       handle.beginning = (): boolean => {
         controlPoint.snap();
 
@@ -26,6 +29,7 @@ export const controlPointModule = new RenderModule(
 
         return true;
       };
+
       handle.continuing = (): void => {
         if ( handle.delta ) {
           controlPoint.drag( handle.delta.clone() );

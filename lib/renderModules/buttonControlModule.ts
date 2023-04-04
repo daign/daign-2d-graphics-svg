@@ -1,3 +1,4 @@
+import { Matrix3 } from '@daign/math';
 import { Handle } from '@daign/handle';
 import { PresentationNode } from '@daign/2d-pipeline';
 import { StyleSelectorChain } from '@daign/style-sheets';
@@ -10,7 +11,8 @@ export const buttonControlModule = new RenderModule(
   ButtonControl,
   (
     currentNode: PresentationNode,
-    _: StyleSelectorChain,
+    _p: Matrix3,
+    _s: StyleSelectorChain,
     node: WrappedNode | null
   ): WrappedNode | null => {
     if ( node !== null ) {
@@ -18,9 +20,11 @@ export const buttonControlModule = new RenderModule(
 
       const handle = new Handle();
       handle.setStartNode( node );
+
       handle.beginning = (): boolean => {
         return true;
       };
+
       handle.clicked = (): void => {
         buttonControl.click();
       };

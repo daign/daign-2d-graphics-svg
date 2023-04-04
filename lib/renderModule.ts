@@ -1,3 +1,4 @@
+import { Matrix3 } from '@daign/math';
 import { PresentationNode } from '@daign/2d-pipeline';
 import { StyleSelectorChain } from '@daign/style-sheets';
 import { WrappedNode } from '@daign/dom-pool';
@@ -17,6 +18,8 @@ export class RenderModule {
   public callback: (
     // The PresentationNode of the object to render.
     currentNode: PresentationNode,
+    // The projection matrix that applies to the object.
+    projection: Matrix3,
     // The style selector chain object.
     selectorChain: StyleSelectorChain,
     // The node created by another module that was applied on the object already before this module.
@@ -34,6 +37,7 @@ export class RenderModule {
     type: any,
     callback: (
         currentNode: PresentationNode,
+        projection: Matrix3,
         selectorChain: StyleSelectorChain,
         node: WrappedNode | null,
         renderer: SvgRenderer

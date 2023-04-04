@@ -1,3 +1,4 @@
+import { Matrix3 } from '@daign/math';
 import { PresentationNode } from '@daign/2d-pipeline';
 import { StyleSelectorChain } from '@daign/style-sheets';
 import { TwoPointImage } from '@daign/2d-graphics';
@@ -9,13 +10,14 @@ export const twoPointImageModule = new RenderModule(
   TwoPointImage,
   (
     currentNode: PresentationNode,
+    projection: Matrix3,
     selectorChain: StyleSelectorChain
   ): WrappedNode | null => {
     const image = currentNode.sourceNode as TwoPointImage;
     selectorChain.addSelector( image.styleSelector );
 
-    const startPoint = image.getStartTransformed( currentNode.projectNodeToView );
-    const size = image.getSizeTransformed( currentNode.projectNodeToView );
+    const startPoint = image.getStartTransformed( projection );
+    const size = image.getSizeTransformed( projection );
 
     const imageNode = WrappedDomPool.getSvg( 'image' );
     imageNode.setAttribute( 'x', String( startPoint.x ) );

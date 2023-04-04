@@ -1,3 +1,4 @@
+import { Matrix3 } from '@daign/math';
 import { PresentationNode, View } from '@daign/2d-pipeline';
 import { StyleSelectorChain } from '@daign/style-sheets';
 import { WrappedDomPool, WrappedNode } from '@daign/dom-pool';
@@ -9,8 +10,9 @@ export const viewModule = new RenderModule(
   View,
   (
     currentNode: PresentationNode,
+    _p: Matrix3,
     selectorChain: StyleSelectorChain,
-    _: WrappedNode | null,
+    _n: WrappedNode | null,
     renderer: SvgRenderer
   ): WrappedNode | null => {
     const groupNode = WrappedDomPool.getSvg( 'g' );

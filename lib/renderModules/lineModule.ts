@@ -1,3 +1,4 @@
+import { Matrix3 } from '@daign/math';
 import { PresentationNode } from '@daign/2d-pipeline';
 import { StyleSelectorChain } from '@daign/style-sheets';
 import { Line } from '@daign/2d-graphics';
@@ -9,13 +10,14 @@ export const lineModule = new RenderModule(
   Line,
   (
     currentNode: PresentationNode,
+    projection: Matrix3,
     selectorChain: StyleSelectorChain
   ): WrappedNode | null => {
     const line = currentNode.sourceNode as Line;
     selectorChain.addSelector( line.styleSelector );
 
-    const startPoint = line.getStartTransformed( currentNode.projectNodeToView );
-    const endPoint = line.getEndTransformed( currentNode.projectNodeToView );
+    const startPoint = line.getStartTransformed( projection );
+    const endPoint = line.getEndTransformed( projection );
 
     const lineNode = WrappedDomPool.getSvg( 'line' );
     lineNode.setAttribute( 'x1', String( startPoint.x ) );

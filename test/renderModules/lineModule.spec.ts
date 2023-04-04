@@ -31,7 +31,8 @@ describe( 'lineModule', (): void => {
       const selectorChain = new StyleSelectorChain();
 
       // Act
-      const result = module.callback( currentNode, selectorChain, null, svgRenderer );
+      const result = module.callback( currentNode, currentNode.projectNodeToView, selectorChain,
+        null, svgRenderer );
 
       // Assert
       expect( result instanceof WrappedNode ).to.be.true;
@@ -52,7 +53,8 @@ describe( 'lineModule', (): void => {
       const selectorChain = new StyleSelectorChain();
 
       // Act
-      const result = module.callback( currentNode, selectorChain, null, svgRenderer );
+      const result = module.callback( currentNode, currentNode.projectNodeToView, selectorChain,
+        null, svgRenderer );
 
       // Assert
       expect( result!.domNode.nodeName ).to.equal( 'line' );

@@ -1,3 +1,4 @@
+import { Matrix3 } from '@daign/math';
 import { PresentationNode } from '@daign/2d-pipeline';
 import { StyleSelectorChain } from '@daign/style-sheets';
 import { Group } from '@daign/2d-graphics';
@@ -10,8 +11,9 @@ export const groupModule = new RenderModule(
   Group,
   (
     currentNode: PresentationNode,
+    _p: Matrix3,
     selectorChain: StyleSelectorChain,
-    _: WrappedNode | null,
+    _n: WrappedNode | null,
     renderer: SvgRenderer
   ): WrappedNode | null => {
     const group = currentNode.sourceNode as Group;

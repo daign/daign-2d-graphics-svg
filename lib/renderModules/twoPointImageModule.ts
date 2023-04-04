@@ -5,8 +5,6 @@ import { WrappedDomPool, WrappedNode } from '@daign/dom-pool';
 
 import { RenderModule } from '../renderModule';
 
-const xlinkNamespace = 'http://www.w3.org/1999/xlink';
-
 export const twoPointImageModule = new RenderModule(
   TwoPointImage,
   (
@@ -24,7 +22,7 @@ export const twoPointImageModule = new RenderModule(
     imageNode.setAttribute( 'y', String( startPoint.y ) );
     imageNode.setAttribute( 'width', String( size.x ) );
     imageNode.setAttribute( 'height', String( size.y ) );
-    imageNode.setAttributeNS( xlinkNamespace, 'href', image.href );
+    imageNode.setAttributeNS( WrappedDomPool.xlinkNamespace, 'href', image.href );
     return imageNode;
   }
 );

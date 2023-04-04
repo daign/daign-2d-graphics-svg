@@ -16,7 +16,8 @@ export const controlPointModule = new RenderModule(
     if ( node !== null ) {
       const controlPoint = currentNode.sourceNode as ControlPoint;
 
-      const handle = new Handle( { startNode: node } );
+      const handle = new Handle();
+      handle.setStartNode( node );
       handle.beginning = (): boolean => {
         controlPoint.snap();
 

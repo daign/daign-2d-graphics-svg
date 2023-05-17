@@ -27,9 +27,12 @@ export const controlObjectModule = new RenderModule(
 
       handle.clicked = (): void => {
         if ( controlObject ) {
+          /* The control object has a presentation node for every view in which it is shown.
+           * Clicking on the control object will activate it in the application for each view. */
           controlObject.presentationNodes.forEach( ( pn: PresentationNode ): void => {
             if ( pn.view instanceof ApplicationView ) {
               pn.view.application.selectionManager.setSelection( controlObject, null );
+              pn.view.application.updateManager.redrawSignal.emit();
             }
           } );
         }

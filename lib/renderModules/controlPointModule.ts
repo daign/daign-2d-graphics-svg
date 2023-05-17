@@ -26,6 +26,7 @@ export const controlPointModule = new RenderModule(
 
         controlPoint.application.selectionManager.setSelection( controlPoint.controlObject,
           controlPoint.targetPoint );
+        controlPoint.application.updateManager.redrawSignal.emit();
 
         return true;
       };

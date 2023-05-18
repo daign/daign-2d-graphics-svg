@@ -32,7 +32,7 @@ export const controlObjectModule = new RenderModule(
           controlObject.presentationNodes.forEach( ( pn: PresentationNode ): void => {
             if ( pn.view instanceof ApplicationView ) {
               pn.view.application.selectionManager.setSelection( controlObject, null );
-              pn.view.application.updateManager.redrawSignal.emit();
+              pn.view.application.redraw();
             }
           } );
         }

@@ -1,6 +1,6 @@
 import { GraphicNode, PresentationNode, View } from '@daign/2d-pipeline';
 import { StyleSelectorChain, StyleSheet, StyleProcessor } from '@daign/style-sheets';
-import { GraphicStyle } from '@daign/2d-graphics';
+import { GraphicStyle, StyledGraphicNode } from '@daign/2d-graphics';
 import { WrappedDomPool, WrappedNode } from '@daign/dom-pool';
 
 import { RenderModule } from './renderModule';
@@ -17,6 +17,9 @@ export class SvgRenderer {
 
   // Whether the renderer should render using SVG native transforms where possible.
   public useNativeTransforms: boolean = false;
+
+  // Whether the renderer should apply styles directly to elements instead of using a stylesheet.
+  public useInlineStyles: boolean = false;
 
   /**
    * Constructor.
@@ -156,10 +159,20 @@ export class SvgRenderer {
 
     if ( node !== null ) {
       // If a node was created, then apply a style.
-      const styleProcessor = new StyleProcessor<GraphicStyle>();
-      const calculatedStyle = styleProcessor.calculateStyle( this.styleSheet, selectorChain,
-        GraphicStyle );
-      this.applyStyle( node, calculatedStyle );
+      if ( this.useInlineStyles ) {
+        // Calculate the style information and apply as inline style.
+        const styleProcessor = new StyleProcessor<GraphicStyle>();
+        const calculatedStyle = styleProcessor.calculateStyle( this.styleSheet, selectorChain,
+          GraphicStyle );
+        this.applyStyle( node, calculatedStyle );
+      } else {
+        // Or set the class attribute to reference a style sheet.
+        const sourceNode = currentNode.sourceNode;
+        if ( sourceNode instanceof StyledGraphicNode ) {
+          const classNames = sourceNode.styleSelector.printSelectorSpaced();
+          ( node as WrappedNode ).setAttribute( 'class', classNames );
+        }
+      }
 
       // If the renderer should use native transforms, then add the transform attribute.
       if ( this.useNativeTransforms && currentNode.sourceNode ) {

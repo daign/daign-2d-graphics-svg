@@ -1,0 +1,61 @@
+import { expect } from 'chai';
+
+import { Vector2 } from '@daign/math';
+import { StyleSelectorChain, StyleSheet } from '@daign/style-sheets';
+import { PresentationNode, View } from '@daign/2d-pipeline';
+import { WrappedNode } from '@daign/dom-pool';
+import { GraphicStyle, UseElement } from '@daign/2d-graphics';
+
+import { RendererFactory } from '../../lib';
+import { useElementModule } from '../../lib/renderModules';
+
+const xlinkNamespace = 'http://www.w3.org/1999/xlink';
+
+describe( 'useElementModule', (): void => {
+  describe( 'render logic callback', (): void => {
+    it( 'should return a wrapped node', (): void => {
+      // Arrange
+      const styleSheet = new StyleSheet<GraphicStyle>();
+      const rendererFactory = new RendererFactory();
+      const svgRenderer = rendererFactory.createRenderer( styleSheet );
+
+      const module = useElementModule;
+      const view = new View();
+      const node = new UseElement();
+      const currentNode = new PresentationNode( view, node );
+      const selectorChain = new StyleSelectorChain();
+
+      // Act
+      const result = module.callback( currentNode, currentNode.projectNodeToView, selectorChain,
+        null, svgRenderer );
+
+      // Assert
+      expect( result instanceof WrappedNode ).to.be.true;
+    } );
+
+    it( 'should create a use node and set the attributes', (): void => {
+      // Arrange
+      const styleSheet = new StyleSheet<GraphicStyle>();
+      const rendererFactory = new RendererFactory();
+      const svgRenderer = rendererFactory.createRenderer( styleSheet );
+
+      const module = useElementModule;
+      const view = new View();
+      const useElement = new UseElement();
+      useElement.anchor = new Vector2( 1, 2 );
+      useElement.href = 'useSource';
+      const currentNode = new PresentationNode( view, useElement );
+      const selectorChain = new StyleSelectorChain();
+
+      // Act
+      const result = module.callback( currentNode, currentNode.projectNodeToView, selectorChain,
+        null, svgRenderer );
+
+      // Assert
+      expect( result!.domNode.nodeName ).to.equal( 'use' );
+      expect( result!.domNode.getAttribute( 'x' ) ).to.equal( '1' );
+      expect( result!.domNode.getAttribute( 'y' ) ).to.equal( '2' );
+      expect( result!.domNode.getAttributeNS( xlinkNamespace, 'href' ) ).to.equal( 'useSource' );
+    } );
+  } );
+} );

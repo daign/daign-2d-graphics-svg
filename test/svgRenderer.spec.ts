@@ -69,6 +69,7 @@ describe( 'SvgRenderer', (): void => {
       const styleSheet = new StyleSheet<GraphicStyle>();
       const rendererFactory = new RendererFactory();
       const svgRenderer = rendererFactory.createRenderer( styleSheet );
+      svgRenderer.useInlineStyles = true;
 
       const node = new Line();
       const view = new View();
@@ -96,6 +97,7 @@ describe( 'SvgRenderer', (): void => {
       const styleSheet = new StyleSheet<GraphicStyle>();
       const rendererFactory = new RendererFactory();
       const svgRenderer = rendererFactory.createRenderer( styleSheet );
+      svgRenderer.useInlineStyles = true;
 
       const node = new CustomLine();
       const view = new View();
@@ -123,6 +125,7 @@ describe( 'SvgRenderer', (): void => {
       const styleSheet = new StyleSheet<GraphicStyle>();
       const rendererFactory = new RendererFactory();
       const svgRenderer = rendererFactory.createRenderer( styleSheet );
+      svgRenderer.useInlineStyles = true;
 
       const node = new CustomLine();
       const view = new View();
@@ -142,6 +145,7 @@ describe( 'SvgRenderer', (): void => {
       const styleSheet = new StyleSheet<GraphicStyle>();
       const rendererFactory = new RendererFactory();
       const svgRenderer = rendererFactory.createRenderer( styleSheet );
+      svgRenderer.useInlineStyles = true;
 
       const node = new Line();
       const view = new View();
@@ -158,6 +162,34 @@ describe( 'SvgRenderer', (): void => {
       expect( target.children[ 0 ].children.length ).to.equal( 1 ); // Line node.
       expect( ( target.children[ 0 ].children[ 0 ] as any )._domNode.nodeName )
         .to.equal( 'line' );
+    } );
+
+    it( 'should set class property when rendering with style sheet enabled', (): void => {
+      // Arrange
+      const styleSheet = new StyleSheet<GraphicStyle>();
+      const rendererFactory = new RendererFactory();
+      const svgRenderer = rendererFactory.createRenderer( styleSheet );
+      svgRenderer.useInlineStyles = false;
+
+      const node = new Line();
+      node.addClass( 'lineClass' );
+      const view = new View();
+      view.mountNode( node );
+      const target = new WrappedNode( 'div' );
+
+      // Act
+      svgRenderer.render( view, target );
+
+      // Assert
+      // View node.
+      expect( target.children.length ).to.equal( 1 );
+      const viewNode = target.children[ 0 ];
+
+      // Line node.
+      expect( viewNode.children.length ).to.equal( 1 );
+      const lineNode = viewNode.children[ 0 ];
+      expect( ( lineNode as any )._domNode.attributes.class )
+        .to.equal( 'line lineClass' );
     } );
   } );
 

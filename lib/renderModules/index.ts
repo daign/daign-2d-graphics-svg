@@ -11,4 +11,5 @@ export { textModule } from './textModule';
 export { twoPointCircleModule } from './twoPointCircleModule';
 export { twoPointImageModule } from './twoPointImageModule';
 export { twoPointRectangleModule } from './twoPointRectangleModule';
+export { useElementModule } from './useElementModule';
 export { viewModule } from './viewModule';

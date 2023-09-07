@@ -5,7 +5,7 @@ import { SvgRenderer } from './svgRenderer';
 
 import { buttonControlModule, controlObjectModule, controlPointModule, fixedRadiusCircleModule,
   groupModule, lineModule, polylineModule, quadraticCurveModule, scalableTextModule, textModule,
-  twoPointCircleModule, twoPointImageModule, twoPointRectangleModule, viewModule
+  twoPointCircleModule, twoPointImageModule, twoPointRectangleModule, useElementModule, viewModule
 } from './renderModules';
 
 export class RendererFactory {
@@ -34,6 +34,7 @@ export class RendererFactory {
     renderer.addRenderModule( textModule );
     renderer.addRenderModule( scalableTextModule );
     renderer.addRenderModule( twoPointImageModule );
+    renderer.addRenderModule( useElementModule );
     renderer.addRenderModule( groupModule );
     renderer.addRenderModule( viewModule );
     renderer.addRenderModule( controlObjectModule );

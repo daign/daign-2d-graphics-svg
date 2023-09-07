@@ -7,14 +7,18 @@ import { WrappedDomPool, WrappedNode } from '@daign/dom-pool';
  */
 export class SvgContext implements ITargetContext {
   private _size: Vector2 = new Vector2( 1, 1 );
-  public wrappedNode: WrappedNode;
+
+  public svgNode: WrappedNode;
+  public styleNode: WrappedNode;
+  public defsNode: WrappedNode;
+  public contentNode: WrappedNode;
 
   /**
    * Get the dom node for the SVG element.
    * @returns - The dom node.
    */
   public get domNode(): any {
-    return this.wrappedNode.domNode;
+    return this.svgNode.domNode;
   }
 
   /**
@@ -42,6 +46,15 @@ export class SvgContext implements ITargetContext {
    * Constructor.
    */
   public constructor() {
-    this.wrappedNode = WrappedDomPool.getSvg( 'svg' );
+    this.svgNode = WrappedDomPool.getSvg( 'svg' );
+
+    this.styleNode = WrappedDomPool.getSvg( 'style' );
+    this.svgNode.appendChild( this.styleNode );
+
+    this.defsNode = WrappedDomPool.getSvg( 'defs' );
+    this.svgNode.appendChild( this.defsNode );
+
+    this.contentNode = WrappedDomPool.getSvg( 'g' );
+    this.svgNode.appendChild( this.contentNode );
   }
 }

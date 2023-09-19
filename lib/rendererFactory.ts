@@ -4,8 +4,9 @@ import { GraphicStyle } from '@daign/2d-graphics';
 import { SvgRenderer } from './svgRenderer';
 
 import { buttonControlModule, controlObjectModule, controlPointModule, fixedRadiusCircleModule,
-  groupModule, lineModule, polylineModule, quadraticCurveModule, scalableTextModule, textModule,
-  twoPointCircleModule, twoPointImageModule, twoPointRectangleModule, useElementModule, viewModule
+  groupModule, lineModule, polygonModule, polylineModule, quadraticCurveModule, scalableTextModule,
+  textModule, twoPointCircleModule, twoPointImageModule, twoPointRectangleModule, useElementModule,
+  viewModule
 } from './renderModules';
 
 export class RendererFactory {
@@ -27,6 +28,7 @@ export class RendererFactory {
      * its superclass. */
     renderer.addRenderModule( lineModule );
     renderer.addRenderModule( twoPointRectangleModule );
+    renderer.addRenderModule( polygonModule );
     renderer.addRenderModule( polylineModule );
     renderer.addRenderModule( twoPointCircleModule );
     renderer.addRenderModule( fixedRadiusCircleModule );

@@ -4,6 +4,7 @@ export { controlPointModule } from './controlPointModule';
 export { fixedRadiusCircleModule } from './fixedRadiusCircleModule';
 export { groupModule } from './groupModule';
 export { lineModule } from './lineModule';
+export { polygonModule } from './polygonModule';
 export { polylineModule } from './polylineModule';
 export { quadraticCurveModule } from './quadraticCurveModule';
 export { scalableTextModule } from './scalableTextModule';

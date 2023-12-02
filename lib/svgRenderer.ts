@@ -91,6 +91,9 @@ export class SvgRenderer {
     if ( style.paintOrder ) {
       node.setAttribute( 'paint-order', style.paintOrder );
     }
+    if ( style.mask ) {
+      node.setAttribute( 'mask', style.mask );
+    }
     if ( style.fontFamily ) {
       node.style.fontFamily = style.fontFamily;
     }

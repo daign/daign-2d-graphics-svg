@@ -24,9 +24,9 @@ describe( 'SvgRenderer', (): void => {
 
       const wrappedNode = new WrappedNode( 'div' );
       const style = new GraphicStyle( 'black', 0.9, 'evenodd', 'blue', 2, 0.8, 'square', 'bevel', 4,
-        '1,2,3', 10, 'non-scaling-stroke', 'block', 'hidden', 0.7, 'normal', 'sans-serif', '12px',
-        'italic', 'small-caps', 'bold', 'ultra-condensed', '2px', '3px', 'line-through', 'fill',
-        'pointer' );
+        '1,2,3', 10, 'non-scaling-stroke', 'block', 'hidden', 0.7, 'normal', 'url(#mask)',
+        'sans-serif', '12px', 'italic', 'small-caps', 'bold', 'ultra-condensed', '2px', '3px',
+        'line-through', 'fill', 'pointer' );
 
       // Act
       ( svgRenderer as any ).applyStyle( wrappedNode, style );
@@ -49,6 +49,7 @@ describe( 'SvgRenderer', (): void => {
       expect( wrappedNode.domNode.getAttribute( 'visibility' ) ).to.equal( 'hidden' );
       expect( wrappedNode.domNode.getAttribute( 'opacity' ) ).to.equal( '0.7' );
       expect( wrappedNode.domNode.getAttribute( 'paint-order' ) ).to.equal( 'normal' );
+      expect( wrappedNode.domNode.getAttribute( 'mask' ) ).to.equal( 'url(#mask)' );
       expect( wrappedNode.domNode.style.fontFamily ).to.equal( 'sans-serif' );
       expect( wrappedNode.domNode.style.fontSize ).to.equal( '12px' );
       expect( wrappedNode.domNode.style.fontStyle ).to.equal( 'italic' );

@@ -1,6 +1,6 @@
 {
   "name": "@daign/2d-graphics-svg",
-  "version": "1.1.8",
+  "version": "1.1.9",
   "description": "A SVG renderer for the daign-2d-graphics library.",
   "keywords": [
     "graphics",

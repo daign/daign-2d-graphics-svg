@@ -293,7 +293,8 @@ describe( 'SvgRenderer', (): void => {
       const lineNode = target.children[ 0 ].children[ 0 ];
       // Simulate click on the node.
       const event = new MockEvent().setClientPoint( 0, 0 );
-      lineNode.domNode.sendEvent( 'click', event );
+      lineNode.domNode.sendEvent( 'mousedown', event );
+      global.document.sendEvent( 'mouseup', event );
 
       // Assert
       expect( onclickSpy.calledOnce ).to.be.true;

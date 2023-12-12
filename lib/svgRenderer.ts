@@ -2,7 +2,7 @@ import { GraphicNode, PresentationNode, View } from '@daign/2d-pipeline';
 import { StyleSelectorChain, StyleSheet, StyleProcessor } from '@daign/style-sheets';
 import { GraphicStyle, StyledGraphicNode } from '@daign/2d-graphics';
 import { WrappedDomPool, WrappedNode } from '@daign/dom-pool';
-import { ClickHandle } from '@daign/handle';
+import { Handle } from '@daign/handle';
 
 import { RenderModule } from './renderModule';
 
@@ -205,12 +205,13 @@ export class SvgRenderer {
 
         // Callback will be executed when node is clicked.
         if ( sourceNode.onclick ) {
-          const handle = new ClickHandle();
+          const handle = new Handle();
           handle.setStartNode( node );
+          handle.beginning = (): boolean => {
+            return true;
+          };
           handle.clicked = (): void => {
-            if ( sourceNode.onclick ) {
-              sourceNode.onclick();
-            }
+            sourceNode.onclick!();
           };
         }
       }

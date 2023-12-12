@@ -5,18 +5,11 @@ import { StyleSelectorChain, StyleSheet } from '@daign/style-sheets';
 import { PresentationNode, View } from '@daign/2d-pipeline';
 import { WrappedNode } from '@daign/dom-pool';
 import { GraphicStyle, QuadraticCurve } from '@daign/2d-graphics';
-import { MockDocument } from '@daign/mock-dom';
 
 import { RendererFactory } from '../../lib';
 import { quadraticCurveModule } from '../../lib/renderModules';
 
-declare var global: any;
-
 describe( 'quadraticCurveModule', (): void => {
-  beforeEach( (): void => {
-    global.document = new MockDocument();
-  } );
-
   describe( 'render logic callback', (): void => {
     it( 'should return a wrapped node', (): void => {
       // Arrange

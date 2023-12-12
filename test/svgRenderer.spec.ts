@@ -1,7 +1,8 @@
 import { expect } from 'chai';
+import { spy } from 'sinon';
 
-import { MockDocument } from '@daign/mock-dom';
-import { View } from '@daign/2d-pipeline';
+import { MockDocument, MockEvent } from '@daign/mock-dom';
+import { NativeTranslateTransform, View } from '@daign/2d-pipeline';
 import { GraphicStyle, Line, StyledGraphicNode } from '@daign/2d-graphics';
 import { StyleSheet } from '@daign/style-sheets';
 import { WrappedNode } from '@daign/dom-pool';
@@ -165,6 +166,33 @@ describe( 'SvgRenderer', (): void => {
         .to.equal( 'line' );
     } );
 
+    it( 'should set transform attribute when native transforms are enabled', (): void => {
+      // Arrange
+      const styleSheet = new StyleSheet<GraphicStyle>();
+      const rendererFactory = new RendererFactory();
+      const svgRenderer = rendererFactory.createRenderer( styleSheet );
+      svgRenderer.useNativeTransforms = true;
+
+      const node = new Line();
+      node.addClass( 'lineClass' );
+      const transform = new NativeTranslateTransform();
+      transform.translation.set( 1, 2 );
+      node.transformation.push( transform );
+      const view = new View();
+      view.mountNode( node );
+      const target = new WrappedNode( 'div' );
+
+      // Act
+      svgRenderer.render( view, target );
+
+      // Assert
+      // Line node.
+      const lineNode = target.children[ 0 ].children[ 0 ];
+
+      expect( lineNode.domNode.getAttribute( 'transform' ) )
+        .to.equal( 'translate(1, 2)' );
+    } );
+
     it( 'should set class property when rendering with style sheet enabled', (): void => {
       // Arrange
       const styleSheet = new StyleSheet<GraphicStyle>();
@@ -189,8 +217,86 @@ describe( 'SvgRenderer', (): void => {
       // Line node.
       expect( viewNode.children.length ).to.equal( 1 );
       const lineNode = viewNode.children[ 0 ];
-      expect( ( lineNode as any )._domNode.attributes.class )
+      expect( lineNode.domNode.attributes.class )
         .to.equal( 'line lineClass' );
+    } );
+
+    it( 'should apply element styles even when style sheet is enabled', (): void => {
+      // Arrange
+      const styleSheet = new StyleSheet<GraphicStyle>();
+      const rendererFactory = new RendererFactory();
+      const svgRenderer = rendererFactory.createRenderer( styleSheet );
+      svgRenderer.useInlineStyles = false;
+
+      const node = new Line();
+      node.addClass( 'lineClass' );
+      const elementStyle = new GraphicStyle( 'FillColor' );
+      node.elementStyle = elementStyle;
+      const view = new View();
+      view.mountNode( node );
+      const target = new WrappedNode( 'div' );
+
+      // Act
+      svgRenderer.render( view, target );
+
+      // Assert
+      // Line node.
+      const lineNode = target.children[ 0 ].children[ 0 ];
+      expect( lineNode.domNode.getAttribute( 'fill' ) ).to.equal( 'FillColor' );
+    } );
+
+    it( 'should set common properties to the node', (): void => {
+      // Arrange
+      const styleSheet = new StyleSheet<GraphicStyle>();
+      const rendererFactory = new RendererFactory();
+      const svgRenderer = rendererFactory.createRenderer( styleSheet );
+      svgRenderer.useInlineStyles = true;
+
+      const node = new Line();
+      node.addClass( 'lineClass' );
+      node.id = 'SomeId';
+      node.mask = 'SomeMask';
+      node.clipPath = 'SomeClipPath';
+      const view = new View();
+      view.mountNode( node );
+      const target = new WrappedNode( 'div' );
+
+      // Act
+      svgRenderer.render( view, target );
+
+      // Assert
+      // The rendered node.
+      const lineNode = target.children[ 0 ].children[ 0 ];
+      expect( lineNode.domNode.getAttribute( 'id' ) ).to.equal( 'SomeId' );
+      expect( lineNode.domNode.getAttribute( 'mask' ) ).to.equal( 'SomeMask' );
+      expect( lineNode.domNode.getAttribute( 'clip-path' ) ).to.equal( 'SomeClipPath' );
+    } );
+
+    it( 'should add handle to execute the onclick function', (): void => {
+      // Arrange
+      const styleSheet = new StyleSheet<GraphicStyle>();
+      const rendererFactory = new RendererFactory();
+      const svgRenderer = rendererFactory.createRenderer( styleSheet );
+      svgRenderer.useInlineStyles = true;
+
+      const node = new Line();
+      node.addClass( 'lineClass' );
+      const onclickSpy = spy();
+      node.onclick = onclickSpy;
+      const view = new View();
+      view.mountNode( node );
+      const target = new WrappedNode( 'div' );
+
+      // Act
+      svgRenderer.render( view, target );
+      // The rendered node.
+      const lineNode = target.children[ 0 ].children[ 0 ];
+      // Simulate click on the node.
+      const event = new MockEvent().setClientPoint( 0, 0 );
+      lineNode.domNode.sendEvent( 'click', event );
+
+      // Assert
+      expect( onclickSpy.calledOnce ).to.be.true;
     } );
   } );
 

@@ -3,10 +3,10 @@ import { GraphicStyle } from '@daign/2d-graphics';
 
 import { SvgRenderer } from './svgRenderer';
 
-import { buttonControlModule, controlObjectModule, controlPointModule, fixedRadiusCircleModule,
-  groupModule, lineModule, maskModule, polygonModule, polylineModule, quadraticCurveModule,
-  scalableTextModule, textModule, twoPointCircleModule, twoPointImageModule,
-  twoPointRectangleModule, useElementModule, viewModule
+import { buttonControlModule, clipPathModule, controlObjectModule, controlPointModule,
+  fixedRadiusCircleModule, groupModule, lineModule, maskModule, polygonModule, polylineModule,
+  quadraticCurveModule, scalableTextModule, symbolElementModule, textModule, twoPointCircleModule,
+  twoPointImageModule, twoPointPatternModule, twoPointRectangleModule, useElementModule, viewModule
 } from './renderModules';
 
 export class RendererFactory {
@@ -36,8 +36,11 @@ export class RendererFactory {
     renderer.addRenderModule( textModule );
     renderer.addRenderModule( scalableTextModule );
     renderer.addRenderModule( twoPointImageModule );
+    renderer.addRenderModule( twoPointPatternModule );
     renderer.addRenderModule( useElementModule );
     renderer.addRenderModule( maskModule );
+    renderer.addRenderModule( clipPathModule );
+    renderer.addRenderModule( symbolElementModule );
     renderer.addRenderModule( groupModule );
     renderer.addRenderModule( viewModule );
     renderer.addRenderModule( controlObjectModule );

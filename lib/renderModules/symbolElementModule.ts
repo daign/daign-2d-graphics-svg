@@ -1,14 +1,14 @@
 import { Matrix3 } from '@daign/math';
 import { PresentationNode } from '@daign/2d-pipeline';
 import { StyleSelectorChain } from '@daign/style-sheets';
-import { Mask } from '@daign/2d-graphics';
+import { SymbolElement } from '@daign/2d-graphics';
 import { WrappedDomPool, WrappedNode } from '@daign/dom-pool';
 
 import { SvgRenderer } from '../svgRenderer';
 import { RenderModule } from '../renderModule';
 
-export const maskModule = new RenderModule(
-  Mask,
+export const symbolElementModule = new RenderModule(
+  SymbolElement,
   (
     currentNode: PresentationNode,
     _p: Matrix3,
@@ -16,15 +16,15 @@ export const maskModule = new RenderModule(
     _n: WrappedNode | null,
     renderer: SvgRenderer
   ): WrappedNode | null => {
-    const mask = currentNode.sourceNode as Mask;
-    selectorChain.addSelector( mask.styleSelector );
+    const symbolElement = currentNode.sourceNode as SymbolElement;
+    selectorChain.addSelector( symbolElement.styleSelector );
 
-    const maskNode = WrappedDomPool.getSvg( 'mask' );
+    const symbolElementNode = WrappedDomPool.getSvg( 'symbol' );
     currentNode.children.forEach( ( child: PresentationNode ): void => {
       const selectorChainCopy = selectorChain.clone();
       const renderedNode = renderer.renderRecursive( child, selectorChainCopy );
-      renderer.appendRenderedNode( maskNode, renderedNode );
+      renderer.appendRenderedNode( symbolElementNode, renderedNode );
     } );
-    return maskNode;
+    return symbolElementNode;
   }
 );

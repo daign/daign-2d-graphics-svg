@@ -2,6 +2,7 @@ import { GraphicNode, PresentationNode, View } from '@daign/2d-pipeline';
 import { StyleSelectorChain, StyleSheet, StyleProcessor } from '@daign/style-sheets';
 import { GraphicStyle, StyledGraphicNode } from '@daign/2d-graphics';
 import { WrappedDomPool, WrappedNode } from '@daign/dom-pool';
+import { ClickHandle } from '@daign/handle';
 
 import { RenderModule } from './renderModule';
 
@@ -138,6 +139,9 @@ export class SvgRenderer {
   public renderRecursive(
     currentNode: PresentationNode, selectorChain: StyleSelectorChain
   ): WrappedNode | null {
+    // The GraphicNode from which the PresentationNode was generated.
+    const sourceNode = currentNode.sourceNode;
+
     /* The resulting node. All modules access this variable and can modify or overwrite nodes that
      * were created by other modules prior in the execution order. */
     let node: WrappedNode | null = null;
@@ -149,10 +153,7 @@ export class SvgRenderer {
 
     // All render modules added to the SvgRenderer are checked and executed if the type matches.
     this.renderModules.forEach( ( module: RenderModule ): void => {
-      if (
-        currentNode.sourceNode &&
-        this.doesModuleMatchToNode( currentNode.sourceNode, module.type )
-      ) {
+      if ( this.doesModuleMatchToNode( sourceNode, module.type ) ) {
         const result = module.callback( currentNode, projection, selectorChain, node, this );
         if ( result !== null ) {
           node = result;
@@ -160,28 +161,57 @@ export class SvgRenderer {
       }
     } );
 
+    // Test if a node was returned as a result from one of the render modules.
     if ( node !== null ) {
-      // If a node was created, then apply a style.
-      if ( this.useInlineStyles ) {
-        // Calculate the style information and apply as inline style.
-        const styleProcessor = new StyleProcessor<GraphicStyle>();
-        const calculatedStyle = styleProcessor.calculateStyle( this.styleSheet, selectorChain,
-          GraphicStyle );
-        this.applyStyle( node, calculatedStyle );
-      } else {
-        // Or set the class attribute to reference a style sheet.
-        const sourceNode = currentNode.sourceNode;
-        if ( sourceNode instanceof StyledGraphicNode ) {
-          const classNames = sourceNode.styleSelector.printSelectorSpaced();
-          ( node as WrappedNode ).setAttribute( 'class', classNames );
+      node = node as WrappedNode;
+
+      // If the renderer should use native transforms, then add the transform attribute.
+      if ( this.useNativeTransforms ) {
+        const transformCommand = currentNode.sourceNode.transformation.nativeSvgTransform;
+        if ( transformCommand ) {
+          node.setAttribute( 'transform', transformCommand );
         }
       }
 
-      // If the renderer should use native transforms, then add the transform attribute.
-      if ( this.useNativeTransforms && currentNode.sourceNode ) {
-        const transformCommand = currentNode.sourceNode.transformation.nativeSvgTransform;
-        if ( transformCommand ) {
-          ( node as WrappedNode ).setAttribute( 'transform', transformCommand );
+      if ( sourceNode instanceof StyledGraphicNode ) {
+        // Apply styling to the node.
+        if ( this.useInlineStyles ) {
+          // Calculate the style information and apply as inline style.
+          const styleProcessor = new StyleProcessor<GraphicStyle>();
+
+          const calculatedStyle = styleProcessor.calculateStyle( this.styleSheet, selectorChain,
+            GraphicStyle, sourceNode.elementStyle || undefined );
+          this.applyStyle( node, calculatedStyle );
+        } else {
+          // Or set the class attribute to reference a style sheet.
+          const classNames = sourceNode.styleSelector.printSelectorSpaced();
+          node.setAttribute( 'class', classNames );
+          // And only set the element style directly to the node.
+          if ( sourceNode.elementStyle ) {
+            this.applyStyle( node, sourceNode.elementStyle );
+          }
+        }
+
+        // Set properties that can be set to every StyledGraphicNode.
+        if ( sourceNode.id ) {
+          node.setAttribute( 'id', sourceNode.id );
+        }
+        if ( sourceNode.mask ) {
+          node.setAttribute( 'mask', sourceNode.mask );
+        }
+        if ( sourceNode.clipPath ) {
+          node.setAttribute( 'clip-path', sourceNode.clipPath );
+        }
+
+        // Callback will be executed when node is clicked.
+        if ( sourceNode.onclick ) {
+          const handle = new ClickHandle();
+          handle.setStartNode( node );
+          handle.clicked = (): void => {
+            if ( sourceNode.onclick ) {
+              sourceNode.onclick();
+            }
+          };
         }
       }
     }
